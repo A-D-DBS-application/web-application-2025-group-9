@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Inloggen</title>
+</head>
+<body>
+    <h2>Inloggen</h2>
+
+    <form action="/login" method="post">
+        <label>Naam:</label><br>
+        <input type="text" name="naam" required><br><br>
+
+        <label>Wachtwoord:</label><br>
+        <input type="password" name="password" required><br>
+
+        <!-- 🔥 Error bericht bij fout inloggen -->
+        {% if error %}
+            <p style="color:red; font-size: 14px;">{{ error }}</p>
+        {% endif %}
+
+        <br>
+        <button type="submit">Inloggen</button>
+    </form>
+
+    <br>
+    <a href="/register">Nog geen account? Klik hier om een account te maken</a>
+</body>
+</html>
+
