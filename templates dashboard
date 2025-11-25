@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard – Solv.io</title>
+</head>
+<body>
+
+    <h1>Welkom bij Solv.io</h1>
+
+    {% if user %}
+        <p>Hallo, {{ user }}! | <a href="/logout">Logout</a></p>
+    {% else %}
+        <p><a href="/login">Login</a> | <a href="/register">Register</a></p>
+    {% endif %}
+
+    <!-- Zoekformulier -->
+    <form action="/dashboard" method="get">
+        <label>Naar welk bedrijf ben je op zoek?</label><br>
+        <input type="text" name="q" placeholder="Typ hier een bedrijfsnaam..." style="width:300px;">
+        <button type="submit">Zoeken</button>
+    </form>
+
+    <!-- Foutmelding -->
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Resultaten -->
+    {% if companies %}
+        <h2>Resultaten:</h2>
+        <ul>
+            {% for c in companies %}
+                <li>
+                    <a href="/company/{{ c.company_id }}">
+                        {{ c.company_name }} ({{ c.sector }})
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+</body>
+</html>
+
+
