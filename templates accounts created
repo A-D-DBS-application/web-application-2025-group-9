@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Account aangemaakt</title>
+</head>
+<body>
+    <h>Account succesvol aangemaakt!</h2><br>   
+    <a href="/dashboard">
+        <button>Ga verder naar de site</button>
+    </a>
+</body>
+</html>
