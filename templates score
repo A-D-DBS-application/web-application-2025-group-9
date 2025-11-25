@@ -1,0 +1,14 @@
+<h1>Solvabiliteitscore voor {{ company.company_name }}</h1>
+
+<h2>{{ score }} / 100</h2>
+
+<p>Gebaseerd op:</p>
+<ul>
+    <li>Solvency ratio: {{ company.solvency_ratio }}</li>
+    <li>Debt ratio: {{ company.debt_ratio }}</li>
+    <li>Credit score: {{ company.credit_score }}</li>
+</ul>
+
+<a href="/dashboard">
+    <button>Terug naar dashboard</button>
+</a>
