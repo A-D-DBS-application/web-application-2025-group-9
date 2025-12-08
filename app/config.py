@@ -1,5 +1,10 @@
-class Config: 
-    SECRET_KEY = 'your_secret_key'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:Group9!?@db.rhhnxaxbtapjenunokzv.supabase.co:5432/postgres'
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class Config:
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
