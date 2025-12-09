@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Inloggen - Solv.io{% endblock %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="card" style="margin-top: 3rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Inloggen</h2>
+        
+        {% include 'components/alerts.html' %}
+        
+        <form action="{{ url_for('main.login') }}" method="post">
+            <div class="form-group">
+                <label for="naam">Gebruikersnaam</label>
+                <input type="text" id="naam" name="naam" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Wachtwoord</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn-primary btn-block">Inloggen</button>
+        </form>
+        
+        <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--border-color);">
+        
+        <p style="text-align: center;">
+            Nog geen account? <a href="{{ url_for('main.register') }}" style="color: var(--secondary-color); font-weight: 600;">Maak er een aan</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

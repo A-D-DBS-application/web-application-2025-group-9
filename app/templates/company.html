@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ company.company_name }} - Solv.io{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2>{{ company.company_name }}</h2>
+        
+        <div style="margin-top: 2rem;">
+            {% if company.sector %}
+                <div class="metric" style="border: none; padding: 0.75rem 0;">
+                    <span class="metric-label">Sector:</span>
+                    <span class="metric-value">{{ company.sector }}</span>
+                </div>
+            {% endif %}
+            
+            {% if company.company_address %}
+                <div class="metric" style="border: none; padding: 0.75rem 0;">
+                    <span class="metric-label">Adres:</span>
+                    <span class="metric-value">{{ company.company_address }}</span>
+                </div>
+            {% endif %}
+            
+            {% if company.credit_score %}
+                <div class="metric" style="border: none; padding: 0.75rem 0;">
+                    <span class="metric-label">Kreditscore:</span>
+                    <span class="metric-value">{{ company.credit_score }}</span>
+                </div>
+            {% endif %}
+            
+            {% if company.solvency_ratio %}
+                <div class="metric" style="border: none; padding: 0.75rem 0;">
+                    <span class="metric-label">Solvabiliteitsratio:</span>
+                    <span class="metric-value">{{ company.solvency_ratio }}%</span>
+                </div>
+            {% endif %}
+            
+            {% if company.debt_ratio %}
+                <div class="metric" style="border: none; padding: 0.75rem 0;">
+                    <span class="metric-label">Schuldenratio:</span>
+                    <span class="metric-value">{{ company.debt_ratio }}%</span>
+                </div>
+            {% endif %}
+        </div>
+        
+        <a href="{{ url_for('main.score', company_id=company.company_id) }}" class="btn-primary" style="display: inline-block; margin-top: 2rem;">
+            Bereken solvabiliteitscore
+        </a>
+        
+        <a href="{{ url_for('main.dashboard') }}" class="btn-secondary" style="display: inline-block; margin-top: 2rem; margin-left: 1rem;">
+            Terug naar dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

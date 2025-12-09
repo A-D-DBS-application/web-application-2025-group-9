@@ -1,0 +1,502 @@
+/* =====================================================
+   SOLV.IO - Global Styles
+   ===================================================== */
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --success-color: #27ae60;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --light-bg: #ecf0f1;
+    --white: #ffffff;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    --border-color: #bdc3c7;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-dark);
+    background-color: var(--light-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* =====================================================
+   HEADER & NAVIGATION
+   ===================================================== */
+
+header {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+header p {
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    color: #ecf0f1;
+}
+
+nav {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav a, nav span {
+    color: var(--white);
+    text-decoration: none;
+    margin-right: 1.5rem;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: var(--secondary-color);
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+footer {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+/* =====================================================
+   MAIN CONTENT CONTAINER
+   ===================================================== */
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    width: 100%;
+}
+
+.container-sm {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    width: 100%;
+}
+
+/* =====================================================
+   FORMS & INPUTS
+   ===================================================== */
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+button, .btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-primary, button[type="submit"] {
+    background-color: var(--secondary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover, button[type="submit"]:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--border-color);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background-color: #229954;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* =====================================================
+   ALERTS & MESSAGES
+   ===================================================== */
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.alert-error {
+    background-color: #fadbd8;
+    color: #a93226;
+    border-left: 4px solid var(--danger-color);
+}
+
+.alert-success {
+    background-color: #d5f4e6;
+    color: #145a32;
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-info {
+    background-color: #d6eaf8;
+    color: #0c3483;
+    border-left: 4px solid var(--secondary-color);
+}
+
+/* =====================================================
+   CARDS
+   ===================================================== */
+
+.card {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.card-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+/* =====================================================
+   LISTS
+   ===================================================== */
+
+ul, ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+/* Company List */
+.company-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.company-list li {
+    margin-bottom: 1rem;
+}
+
+.company-item {
+    padding: 1rem;
+    background-color: var(--white);
+    border-left: 4px solid var(--secondary-color);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.company-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+}
+
+.company-item a {
+    text-decoration: none;
+    color: var(--text-dark);
+    display: block;
+}
+
+.company-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.company-sector {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+/* =====================================================
+   SCORE DISPLAY
+   ===================================================== */
+
+.score-container {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.score-number {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 1rem 0;
+}
+
+.score-max {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.score-metrics {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.metric-label {
+    font-weight: 600;
+}
+
+.metric-value {
+    text-align: right;
+}
+
+/* =====================================================
+   SEARCH FORM
+   ===================================================== */
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.search-form input {
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-form button {
+    padding: 0.75rem 2rem;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN
+   ===================================================== */
+
+/* Desktop Large (1200px and above) */
+@media (min-width: 1200px) {
+    .container {
+        padding: 0 3rem;
+    }
+
+    header {
+        padding: 2rem 3rem;
+    }
+
+    .search-form {
+        gap: 1.5rem;
+    }
+}
+
+/* Desktop Small (768px to 1199px) */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .container {
+        max-width: 900px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-form input {
+        min-width: 100%;
+    }
+}
+
+/* Tablet (576px to 767px) */
+@media (max-width: 767px) {
+    body {
+        font-size: 0.95rem;
+    }
+
+    header {
+        padding: 1rem 1.5rem;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+    }
+
+    .container {
+        margin: 1.5rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .score-number {
+        font-size: 2.5rem;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav a, nav span {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Mobile (below 576px) */
+@media (max-width: 575px) {
+    body {
+        font-size: 0.9rem;
+    }
+
+    header {
+        padding: 1rem;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+    }
+
+    .container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    button, .btn {
+        width: 100%;
+        padding: 0.6rem 1rem;
+    }
+
+    .score-number {
+        font-size: 2rem;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+}
