@@ -69,6 +69,7 @@ class Company(db.Model):
     company_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     company_name = db.Column(db.String(255), nullable=False)
     company_address = db.Column(db.String(500))
+    vat_number = db.Column(db.String(50), unique=True)  # BTW-nummer
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     credit_score = db.Column(db.Numeric(10, 2))
     solvency_ratio = db.Column(db.Numeric(10, 2))
