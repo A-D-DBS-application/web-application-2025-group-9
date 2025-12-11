@@ -119,7 +119,7 @@ class Case(db.Model):
     
     case_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     company_id = db.Column(db.String(36), db.ForeignKey('companies.company_id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
     amount = db.Column(db.Numeric(15, 2), nullable=False, default=0)
     status = db.Column(db.String(50), nullable=False, default='pending')  # case-status type in DB
     is_debtor = db.Column(db.Boolean, default=False)  # Flag for debtor list

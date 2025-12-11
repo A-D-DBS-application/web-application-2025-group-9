@@ -217,17 +217,19 @@ def debtors():
 @main.route("/add_debtor/<company_id>", methods=["POST"])
 def add_debtor(company_id):
     """Add a company to the debtor list"""
-    user = session.get("user")
-    if not user:
+    user_id = session.get("user_id")
+    if not user_id:
         return redirect(url_for("main.login"))
-    
-    # Find or create a case for this company and user
-    case = Case.query.filter_by(company_id=company_id, user_id=session['user_id']).first()
+
+    # Find a case for this user and company
+    case = Case.query.filter_by(company_id=company_id, user_id=user_id).first()
+
     if not case:
-        case = Case(company_id=company_id, user_id=session['user_id'])
-    
+        # Create a new case linking the user and company
+        case = Case(company_id=company_id, user_id=user_id)
+
     case.is_debtor = True
     db.session.add(case)
     db.session.commit()
-    
+
     return redirect(url_for("main.company", company_id=company_id))
