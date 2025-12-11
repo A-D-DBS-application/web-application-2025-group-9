@@ -1,6 +1,5 @@
 from flask import Blueprint, request, redirect, url_for, render_template, session
 from .models import db, LoginGegevens, User, Company, Case, Role
-import bcrypt
 
 main = Blueprint("main", __name__)
 
@@ -19,13 +18,12 @@ def index():
 
 @main.route("/login", methods=["GET", "POST"])
 def login():
-    """Login route - authenticate user with username and password"""
+    """Login route - authenticate user with username only"""
     if request.method == "GET":
         return render_template("login.html")
     
     # POST - Process login
     naam = request.form.get("naam")
-    password = request.form.get("password")
     
     # Find user by login username
     login_user = LoginGegevens.query.filter_by(naam=naam).first()
@@ -33,13 +31,10 @@ def login():
     if not login_user:
         return render_template("login.html", error="Gebruiker bestaat niet")
     
-    # Verify password using bcrypt
-    if bcrypt.checkpw(password.encode('utf-8'), login_user.password.encode('utf-8')):
-        session['user'] = naam
-        session['user_id'] = login_user.user_id
-        return redirect(url_for("main.dashboard"))
-    else:
-        return render_template("login.html", error="Wachtwoord is incorrect")
+    # No password check needed - open access
+    session['user'] = naam
+    session['user_id'] = login_user.user_id
+    return redirect(url_for("main.dashboard"))
 
 
 @main.route("/register", methods=["GET", "POST"])
@@ -55,13 +50,6 @@ def register():
     naam = request.form.get("naam")
     user_name = request.form.get("user_name", naam)  # Default to naam if not provided
     user_email = request.form.get("user_email")
-    password = request.form.get("password")
-    password2 = request.form.get("password2")
-    
-    # Validation: Passwords match
-    if password != password2:
-        roles = Role.query.all()
-        return render_template("register.html", error="Wachtwoorden zijn niet gelijk!", roles=roles)
     
     # Validation: Username doesn't exist
     existing_login = LoginGegevens.query.filter_by(naam=naam).first()
@@ -75,12 +63,6 @@ def register():
         roles = Role.query.all()
         return render_template("register.html", error="Email bestaat al!", roles=roles)
     
-    # Hash password with bcrypt
-    hashed_pw = bcrypt.hashpw(
-        password.encode('utf-8'),
-        bcrypt.gensalt()
-    ).decode('utf-8')
-    
     # Create new User
     new_user = User(
         user_name=user_name,
@@ -90,10 +72,9 @@ def register():
     db.session.add(new_user)
     db.session.flush()  # Flush to get user_id without committing
     
-    # Create new LoginGegevens linked to User
+    # Create new LoginGegevens linked to User (no password)
     new_login = LoginGegevens(
         naam=naam,
-        password=hashed_pw,
         user_id=new_user.user_id
     )
     db.session.add(new_login)

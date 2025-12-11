@@ -29,7 +29,6 @@ class LoginGegevens(db.Model):
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     naam = db.Column(db.String(255), nullable=False, unique=True)
-    password = db.Column(db.Text, nullable=False)  # bcrypt hashed
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Foreign key to users table
