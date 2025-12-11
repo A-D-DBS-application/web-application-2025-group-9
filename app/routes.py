@@ -1,6 +1,7 @@
-from flask import Blueprint, request, redirect, url_for, render_template, session
+from flask import Blueprint, request, redirect, url_for, render_template, session, flash
 from .models import db, LoginGegevens, User, Company, Case, Role
 from .api_client import get_company_financials
+import re
 
 main = Blueprint("main", __name__)
 
@@ -118,13 +119,15 @@ def dashboard():
     if not query:
         return render_template("dashboard.html", user=user, companies=companies)
     
-    # Check if query looks like a VAT number
+    # Check if query could be a VAT number (BTW-nummer)
     import re
-    vat_pattern = re.compile(r'^BE\s?\d{4}\.?\d{3}\.?\d{3}$')
-    if vat_pattern.match(query.strip()):
-        # Clean the VAT number (remove spaces and dots)
-        clean_vat = query.replace(' ', '').replace('.', '')
-        return redirect(url_for('main.search_vat', vat_number=clean_vat))
+    # Normalize the query: uppercase, remove spaces, dots, and hyphens
+    normalized_query = query.upper().replace(' ', '').replace('.', '').replace('-', '')
+
+    # Check if it looks like a Belgian VAT number
+    if normalized_query.startswith('BE') and normalized_query[2:].isdigit() and len(normalized_query) == 12:
+        # The VAT number is already clean and normalized
+        return redirect(url_for('main.search_vat', vat_number=normalized_query))
     
     # Search companies by name
     companies = Company.query.filter(
