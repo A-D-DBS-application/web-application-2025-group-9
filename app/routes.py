@@ -118,6 +118,14 @@ def dashboard():
     if not query:
         return render_template("dashboard.html", user=user, companies=companies)
     
+    # Check if query looks like a VAT number
+    import re
+    vat_pattern = re.compile(r'^BE\s?\d{4}\.?\d{3}\.?\d{3}$')
+    if vat_pattern.match(query.strip()):
+        # Clean the VAT number (remove spaces and dots)
+        clean_vat = query.replace(' ', '').replace('.', '')
+        return redirect(url_for('main.search_vat', vat_number=clean_vat))
+    
     # Search companies by name
     companies = Company.query.filter(
         Company.company_name.ilike(f"%{query}%")

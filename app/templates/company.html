@@ -41,6 +41,8 @@
                     <span class="metric-label">Schuldenratio:</span>
                     <span class="metric-value">{{ company.debt_ratio }}%</span>
                 </div>
+            {% endif %}
+            
             {% if company.vat_number %}
                 <div class="metric" style="border: none; padding: 0.75rem 0;">
                     <span class="metric-label">BTW-nummer:</span>
