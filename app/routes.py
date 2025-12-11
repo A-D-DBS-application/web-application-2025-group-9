@@ -1,5 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, render_template, session
 from .models import db, LoginGegevens, User, Company, Case, Role
+from .api_client import get_company_financials
 
 main = Blueprint("main", __name__)
 
@@ -130,6 +131,36 @@ def dashboard():
     return render_template("dashboard.html", user=user, companies=companies)
 
 
+@main.route("/search_vat/<vat_number>")
+def search_vat(vat_number):
+    """Search company by VAT number and fetch data from bizzy.ai API"""
+    try:
+        # Fetch data from API
+        api_data = get_company_financials(vat_number)
+        
+        # Find or create company record
+        company = Company.query.filter_by(vat_number=vat_number).first()
+        if not company:
+            company = Company(vat_number=vat_number)
+        
+        # Update with API data
+        company.company_name = api_data.get('company_name')
+        company.credit_score = api_data.get('credit_score')
+        company.solvency_ratio = api_data.get('solvency_ratio')
+        company.debt_ratio = api_data.get('debt_ratio')
+        company.sector = api_data.get('sector')
+        
+        db.session.add(company)
+        db.session.commit()
+        
+        # Redirect to company detail page
+        return redirect(url_for("main.company", company_id=company.company_id))
+        
+    except Exception as e:
+        # On error, redirect back to dashboard with error
+        return redirect(url_for("main.dashboard"))
+
+
 # =====================================================
 # COMPANY DETAIL ROUTES
 # =====================================================
@@ -157,3 +188,38 @@ def score(company_id):
     score = company.calculate_solvency_score()
     
     return render_template("score.html", company=company, score=score)
+
+
+@main.route("/debtors")
+def debtors():
+    """Display list of debtor companies sorted by credit score"""
+    user = session.get("user")
+    if not user:
+        return redirect(url_for("main.login"))
+    
+    # Get user's cases that are marked as debtors
+    debtor_cases = Case.query.filter_by(user_id=session['user_id'], is_debtor=True).all()
+    
+    # Sort by solvency score (ascending - lowest score first)
+    sorted_cases = sorted(debtor_cases, key=lambda c: c.company.calculate_solvency_score() or 0)
+    
+    return render_template("debtors.html", user=user, cases=sorted_cases)
+
+
+@main.route("/add_debtor/<company_id>", methods=["POST"])
+def add_debtor(company_id):
+    """Add a company to the debtor list"""
+    user = session.get("user")
+    if not user:
+        return redirect(url_for("main.login"))
+    
+    # Find or create a case for this company and user
+    case = Case.query.filter_by(company_id=company_id, user_id=session['user_id']).first()
+    if not case:
+        case = Case(company_id=company_id, user_id=session['user_id'])
+    
+    case.is_debtor = True
+    db.session.add(case)
+    db.session.commit()
+    
+    return redirect(url_for("main.company", company_id=company_id))

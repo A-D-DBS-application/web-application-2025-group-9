@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Debiteuren - Solv.io{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Debiteurenlijst</h2>
+    <p>Bedrijven die als debiteur zijn gemarkeerd, gesorteerd op kredietwaardigheid (laagste score eerst).</p>
+    
+    {% include 'components/alerts.html' %}
+    
+    {% if cases %}
+        <h3>Debiteuren ({{ cases|length }} gevonden)</h3>
+        
+        <ul class="company-list">
+            {% for case in cases %}
+                <li>
+                    <div class="company-item">
+                        <a href="{{ url_for('main.company', company_id=case.company.company_id) }}">
+                            <div class="company-name">{{ case.company.company_name }}</div>
+                            <div class="company-sector">
+                                BTW: {{ case.company.vat_number or 'Onbekend' }}
+                                {% if case.company.credit_score %}
+                                    | Kreditscore: {{ case.company.credit_score }}
+                                {% endif %}
+                                {% if case.amount %}
+                                    | Bedrag: €{{ case.amount }}
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="case-status">
+                            Status: {{ case.status or 'Onbekend' }}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="text-align: center; color: var(--text-light); padding: 2rem 0;">
+            Geen debiteuren gevonden. Markeer bedrijven als debiteur op hun detailpagina.
+        </p>
+    {% endif %}
+    
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{{ url_for('main.dashboard') }}" class="btn-secondary">Terug naar zoeken</a>
+    </div>
+</div>
+{% endblock %}

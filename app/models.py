@@ -122,6 +122,7 @@ class Case(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     amount = db.Column(db.Numeric(15, 2))
     status = db.Column(db.String(50))  # case-status type in DB
+    is_debtor = db.Column(db.Boolean, default=False)  # Flag for debtor list
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self):
