@@ -7,7 +7,10 @@ def get_company_financials(vat_number):
     if not api_key:
         raise ValueError("BIZZY_API_KEY not configured")
     
-    url = f"https://api.bizzy.ai/v1/companies/BE/{vat_number}/financials"
+    # Clean VAT number: remove "BE", spaces, dots
+    clean_vat = vat_number.replace("BE", "").replace(" ", "").replace(".", "")
+    
+    url = f"https://api.bizzy.ai/v1/companies/BE/{clean_vat}/financials"
     
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -39,8 +42,8 @@ def get_company_financials(vat_number):
     # Map to our Company model fields
     company_data = {
         "company_name": company_name,
-        "vat_number": vat_number,
-        "credit_score": latest_account.get("healthIndicator"),  # Assuming this is credit score
+        "vat_number": vat_number,  # Keep original format
+        "credit_score": latest_account.get("healthIndicator"),  # This is the credit score
         "solvency_ratio": solvency.get("equity") / solvency.get("totalAssets") if solvency.get("totalAssets") else None,
         "debt_ratio": (solvency.get("debt") / solvency.get("totalAssets") * 100) if solvency.get("totalAssets") else None,
         "sector": None  # Not provided in API response
