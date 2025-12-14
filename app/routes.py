@@ -146,13 +146,16 @@ def dashboard():
 def search_vat(vat_number):
     """Search company by VAT number and fetch data from bizzy.ai API"""
     try:
-        # Fetch data from API
-        api_data = get_company_financials(vat_number)
+        # Clean VAT number for storage consistency
+        clean_vat = f"BE{vat_number.replace('BE', '').replace(' ', '').replace('.', '').replace('-', '')}"
         
-        # Find or create company record
-        company = Company.query.filter_by(vat_number=vat_number).first()
+        # Fetch data from API
+        api_data = get_company_financials(clean_vat)
+        
+        # Find or create company record using clean VAT number
+        company = Company.query.filter_by(vat_number=clean_vat).first()
         if not company:
-            company = Company(vat_number=vat_number)
+            company = Company(vat_number=clean_vat)
         
         # Update with API data
         company.company_name = api_data.get('company_name')
@@ -228,10 +231,17 @@ def add_debtor(company_id):
     case = Case.query.filter_by(company_id=company_id, user_id=user_id).first()
 
     if not case:
-        # Create a new case linking the user and company
-        case = Case(company_id=company_id, user_id=user_id)
+        # Create a new case linking the user and company with default values
+        case = Case(
+            company_id=company_id, 
+            user_id=user_id,
+            amount=0,
+            status='pending',
+            is_debtor=True
+        )
+    else:
+        case.is_debtor = True
 
-    case.is_debtor = True
     db.session.add(case)
     db.session.commit()
 

@@ -42,7 +42,7 @@ def get_company_financials(vat_number):
     # Map to our Company model fields
     company_data = {
         "company_name": company_name,
-        "vat_number": vat_number,  # Keep original format
+        "vat_number": f"BE{clean_vat}",  # Store in clean format: BE0473416418
         "credit_score": latest_account.get("healthIndicator"),  # This is the credit score
         "solvency_ratio": solvency.get("equity") / solvency.get("totalAssets") if solvency.get("totalAssets") else None,
         "debt_ratio": (solvency.get("debt") / solvency.get("totalAssets") * 100) if solvency.get("totalAssets") else None,
