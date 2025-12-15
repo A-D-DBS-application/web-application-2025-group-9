@@ -116,20 +116,6 @@ class Company(db.Model):
         return round(score, 2)
 
 
-class Company1(db.Model):
-    """Alternative company data table (structure to be determined)"""
-    __tablename__ = 'companies1'
-    
-    company_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = db.Column(db.String(255))
-    
-    # Relationships
-    statements = db.relationship('Statement', backref='company_alt', lazy=True)
-    
-    def __repr__(self):
-        return f"<Company1 {self.name}>"
-
-
 # =====================================================
 # CASE MANAGEMENT
 # =====================================================
@@ -167,38 +153,3 @@ class Case(db.Model):
     
     def __repr__(self):
         return f"<Case {self.case_id} - {self.status}>"
-
-
-# =====================================================
-# FINANCIAL STATEMENTS & REFERENCE DATA
-# =====================================================
-
-class Table(db.Model):
-    """Reference table for statements"""
-    __tablename__ = 'tables'
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    statement_id = db.Column(db.String(100))  # Link to statements
-    table_name = db.Column(db.String(255))
-    
-    def __repr__(self):
-        return f"<Table {self.table_name}>"
-
-
-class Statement(db.Model):
-    """Financial statements for companies"""
-    __tablename__ = 'statements'
-    
-    id = db.Column(db.Integer, db.ForeignKey('tables.id'), primary_key=True)
-    company_id = db.Column(db.String(36), db.ForeignKey('companies1.company_id'), nullable=False)
-    year = db.Column(db.Integer)
-    activa = db.Column(db.Numeric(15, 2))
-    oprichtingskosten = db.Column(db.Numeric(15, 2))
-    vaste_activa = db.Column(db.Numeric(15, 2))
-    immateriële_activa = db.Column(db.Numeric(15, 2))
-    source_date = db.Column(db.Date)
-    file_name = db.Column(db.String(500))  # PDF file name or URL
-    inserted_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    def __repr__(self):
-        return f"<Statement {self.company_id} - {self.year}>"
