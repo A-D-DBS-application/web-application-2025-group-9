@@ -490,6 +490,54 @@ def batch_detail(batch_id):
     return render_template("batch_detail.html", batch=batch, cases=sorted_cases)
 
 
+@main.route("/batch/<int:batch_id>/export_pdf")
+def export_batch_pdf(batch_id):
+    """Export batch to PDF"""
+    from xhtml2pdf import pisa
+    from flask import make_response
+    from datetime import datetime
+    from io import BytesIO
+    
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("main.login"))
+    
+    # Get batch using ORM
+    batch = DebtorBatch.query.get_or_404(batch_id)
+    
+    # Security check
+    if str(batch.user_id) != str(user_id):
+        flash("Geen toegang tot deze batch", "danger")
+        return redirect(url_for("main.debtors"))
+    
+    # Get cases using ORM
+    cases = Case.query.filter_by(batch_id=batch_id).all()
+    
+    # Sort by quick ratio (primary) then cash (secondary)
+    sorted_cases = sorted(cases, key=lambda c: (
+        -(float(c.company.quick_ratio) if c.company.quick_ratio else -999),
+        -(float(c.company.cash) if c.company.cash else -999)
+    ))
+    
+    # Render HTML template
+    html_string = render_template("batch_pdf.html", 
+                                 batch=batch, 
+                                 cases=sorted_cases,
+                                 export_date=datetime.now())
+    
+    # Convert to PDF
+    pdf_file = BytesIO()
+    pisa.CreatePDF(html_string, dest=pdf_file)
+    pdf_file.seek(0)
+    
+    # Return as download
+    response = make_response(pdf_file.read())
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = f"attachment; filename=batch_{batch.batch_name.replace(' ', '_')}.pdf"
+    
+    return response
+
+
 @main.route("/batch/<int:batch_id>/delete", methods=["POST"])
 def delete_batch(batch_id):
     """Delete an entire batch and all its cases"""
