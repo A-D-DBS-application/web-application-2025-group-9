@@ -3,75 +3,183 @@
 {% block title %}{{ company.company_name }} - Solv.io{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="card">
-        <h2>{{ company.company_name }}</h2>
-        
-        <div style="margin-top: 2rem;">
-            {% if company.sector %}
-                <div class="metric" style="border: none; padding: 0.75rem 0;">
-                    <span class="metric-label">Sector:</span>
-                    <span class="metric-value">{{ company.sector }}</span>
-                </div>
-            {% endif %}
-            
-            {% if company.company_address %}
-                <div class="metric" style="border: none; padding: 0.75rem 0;">
-                    <span class="metric-label">Adres:</span>
-                    <span class="metric-value">{{ company.company_address }}</span>
-                </div>
-            {% endif %}
-            
-            {% if company.credit_score %}
-                <div class="metric" style="border: none; padding: 0.75rem 0;">
-                    <span class="metric-label">Kreditscore:</span>
-                    <span class="metric-value">{{ company.credit_score }}</span>
-                </div>
-            {% endif %}
-            
-            {% if company.solvency_ratio %}
-                <div class="metric" style="border: none; padding: 0.75rem 0;">
-                    <span class="metric-label">Solvabiliteitsratio:</span>
-                    <span class="metric-value">{{ company.solvency_ratio }}%</span>
-                </div>
-            {% endif %}
-            
-            {% if company.debt_ratio %}
-                <div class="metric" style="border: none; padding: 0.75rem 0;">
-                    <span class="metric-label">Schuldenratio:</span>
-                    <span class="metric-value">{{ company.debt_ratio }}%</span>
-                </div>
-            {% endif %}
-            
-            {% if company.vat_number %}
-                <div class="metric" style="border: none; padding: 0.75rem 0;">
-                    <span class="metric-label">BTW-nummer:</span>
-                    <span class="metric-value">{{ company.vat_number }}</span>
-                </div>
-            {% endif %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="bi bi-building"></i> {{ company.company_name }}
+                {% if company.common_score %}
+                    <span class="badge 
+                        {% if company.common_score == 'A' %}bg-success
+                        {% elif company.common_score == 'B' %}bg-primary
+                        {% elif company.common_score == 'C' %}bg-warning
+                        {% elif company.common_score == 'D' %}bg-danger
+                        {% elif company.common_score == 'E' %}bg-dark
+                        {% endif %}">
+                        Risico: {{ company.common_score }}
+                    </span>
+                {% endif %}
+            </h2>
         </div>
-        
-        <div style="margin-top: 2rem;">
-            {% if company.vat_number %}
-                <a href="{{ url_for('main.search_vat', vat_number=company.vat_number) }}" class="btn-secondary" style="display: inline-block; margin-right: 1rem;">
-                    Haal nieuwste data op
+    </div>
+
+    <!-- Basic Information Card -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Bedrijfsinformatie</h5>
+                </div>
+                <div class="card-body">
+                    {% if company.vat_number %}
+                        <p><strong>BTW-nummer:</strong> {{ company.vat_number }}</p>
+                    {% endif %}
+                    {% if company.company_address %}
+                        <p><strong>Adres:</strong> {{ company.company_address }}</p>
+                    {% endif %}
+                    {% if company.legal_status %}
+                        <p><strong>Juridische status:</strong> {{ company.legal_status }}</p>
+                    {% endif %}
+                    {% if company.established_since %}
+                        <p><strong>Opgericht:</strong> {{ company.established_since.strftime('%d-%m-%Y') }}</p>
+                    {% endif %}
+                    {% if company.revenue_estimation %}
+                        <p><strong>Omzetschatting:</strong> {{ company.revenue_estimation }}</p>
+                    {% endif %}
+                    {% if company.employee_estimation %}
+                        <p><strong>Personeelsschatting:</strong> {{ company.employee_estimation }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk & Credit Card -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-shield-exclamation"></i> Risico & Krediet</h5>
+                </div>
+                <div class="card-body">
+                    {% if company.credit_score %}
+                        <p><strong>Health Indicator:</strong> <span class="badge bg-info">{{ company.credit_score }}/10</span></p>
+                    {% endif %}
+                    {% if company.common_score %}
+                        <p><strong>CreditSafe Score:</strong> 
+                            <span class="badge 
+                                {% if company.common_score == 'A' %}bg-success
+                                {% elif company.common_score == 'B' %}bg-primary
+                                {% elif company.common_score == 'C' %}bg-warning
+                                {% elif company.common_score == 'D' %}bg-danger
+                                {% elif company.common_score == 'E' %}bg-dark
+                                {% endif %}">
+                                {{ company.common_score }}
+                            </span>
+                        </p>
+                    {% endif %}
+                    {% if company.credit_limit %}
+                        <p><strong>Aanbevolen kredietlimiet:</strong> €{{ "{:,.2f}".format(company.credit_limit) }}</p>
+                    {% endif %}
+                    {% if company.solvency_ratio %}
+                        <p><strong>Solvabiliteitsratio:</strong> {{ "{:.2f}".format(company.solvency_ratio) }}%</p>
+                    {% endif %}
+                    {% if company.debt_ratio %}
+                        <p><strong>Schuldenratio:</strong> {{ "{:.2f}".format(company.debt_ratio) }}%</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Metrics Row -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Liquiditeit</h5>
+                </div>
+                <div class="card-body">
+                    {% if company.current_ratio %}
+                        <p><strong>Current Ratio:</strong> {{ "{:.4f}".format(company.current_ratio) }}</p>
+                    {% endif %}
+                    {% if company.quick_ratio %}
+                        <p><strong>Quick Ratio:</strong> {{ "{:.4f}".format(company.quick_ratio) }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-cash-stack"></i> Rentabiliteit</h5>
+                </div>
+                <div class="card-body">
+                    {% if company.ebitda %}
+                        <p><strong>EBITDA:</strong> €{{ "{:,.2f}".format(company.ebitda) }}</p>
+                    {% endif %}
+                    {% if company.net_profit %}
+                        <p><strong>Nettowinst:</strong> €{{ "{:,.2f}".format(company.net_profit) }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance Sheet -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-calculator"></i> Balans</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if company.total_assets %}
+                                <p><strong>Totaal activa:</strong> €{{ "{:,.2f}".format(company.total_assets) }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            {% if company.equity %}
+                                <p><strong>Eigen vermogen:</strong> €{{ "{:,.2f}".format(company.equity) }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            {% if company.total_debt %}
+                                <p><strong>Totale schuld:</strong> €{{ "{:,.2f}".format(company.total_debt) }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2">
+                {% if company.vat_number %}
+                    <a href="{{ url_for('main.search_vat', vat_number=company.vat_number) }}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-clockwise"></i> Haal nieuwste data op
+                    </a>
+                {% endif %}
+                
+                <form action="{{ url_for('main.add_debtor', company_id=company.company_id) }}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-person-plus"></i> Voeg toe aan debiteuren
+                    </button>
+                </form>
+                
+                <a href="{{ url_for('main.score', company_id=company.company_id) }}" class="btn btn-success">
+                    <i class="bi bi-calculator-fill"></i> Bereken solvabiliteitscore
                 </a>
-            {% endif %}
-            
-            <form action="{{ url_for('main.add_debtor', company_id=company.company_id) }}" method="post" style="display: inline;">
-                <button type="submit" class="btn-secondary">
-                    Voeg toe aan debiteuren
-                </button>
-            </form>
+                
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Terug naar dashboard
+                </a>
+            </div>
         </div>
-        
-        <a href="{{ url_for('main.score', company_id=company.company_id) }}" class="btn-primary" style="display: inline-block; margin-top: 2rem;">
-            Bereken solvabiliteitscore
-        </a>
-        
-        <a href="{{ url_for('main.dashboard') }}" class="btn-secondary" style="display: inline-block; margin-top: 2rem; margin-left: 1rem;">
-            Terug naar dashboard
-        </a>
     </div>
 </div>
 {% endblock %}

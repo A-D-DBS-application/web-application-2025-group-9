@@ -149,7 +149,7 @@ def search_vat(vat_number):
         # Clean VAT number for storage consistency
         clean_vat = f"BE{vat_number.replace('BE', '').replace(' ', '').replace('.', '').replace('-', '')}"
         
-        # Fetch data from API
+        # Fetch comprehensive data from API (Details + Financials)
         api_data = get_company_financials(clean_vat)
         
         # Find or create company record using clean VAT number
@@ -157,11 +157,25 @@ def search_vat(vat_number):
         if not company:
             company = Company(vat_number=clean_vat)
         
-        # Update with API data
+        # Update with all API data
         company.company_name = api_data.get('company_name')
+        company.company_address = api_data.get('company_address')
+        company.legal_status = api_data.get('legal_status')
+        company.established_since = api_data.get('established_since')
+        company.revenue_estimation = api_data.get('revenue_estimation')
+        company.employee_estimation = api_data.get('employee_estimation')
+        company.common_score = api_data.get('common_score')
+        company.credit_limit = api_data.get('credit_limit')
         company.credit_score = api_data.get('credit_score')
         company.solvency_ratio = api_data.get('solvency_ratio')
         company.debt_ratio = api_data.get('debt_ratio')
+        company.current_ratio = api_data.get('current_ratio')
+        company.quick_ratio = api_data.get('quick_ratio')
+        company.ebitda = api_data.get('ebitda')
+        company.net_profit = api_data.get('net_profit')
+        company.total_assets = api_data.get('total_assets')
+        company.equity = api_data.get('equity')
+        company.total_debt = api_data.get('total_debt')
         company.sector = api_data.get('sector')
         
         db.session.add(company)

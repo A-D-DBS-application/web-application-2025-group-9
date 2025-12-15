@@ -71,10 +71,29 @@ class Company(db.Model):
     company_address = db.Column(db.String(500))
     vat_number = db.Column(db.String(50), unique=True)  # BTW-nummer
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Basic financial metrics
     credit_score = db.Column(db.Numeric(10, 2))
     solvency_ratio = db.Column(db.Numeric(10, 2))
     debt_ratio = db.Column(db.Numeric(10, 2))
     sector = db.Column(db.String(255))
+    
+    # New fields from Details API
+    legal_status = db.Column(db.String(100))
+    established_since = db.Column(db.Date)
+    revenue_estimation = db.Column(db.String(50))
+    employee_estimation = db.Column(db.String(50))
+    common_score = db.Column(db.String(10))  # A, B, C, D, E
+    credit_limit = db.Column(db.Numeric(15, 2))
+    
+    # New fields from Financials API
+    current_ratio = db.Column(db.Numeric(10, 4))
+    quick_ratio = db.Column(db.Numeric(10, 4))
+    ebitda = db.Column(db.Numeric(15, 2))
+    net_profit = db.Column(db.Numeric(15, 2))
+    total_assets = db.Column(db.Numeric(15, 2))
+    equity = db.Column(db.Numeric(15, 2))
+    total_debt = db.Column(db.Numeric(15, 2))
     
     # Relationships
     cases = db.relationship('Case', backref='company', lazy=True, foreign_keys='Case.company_id')

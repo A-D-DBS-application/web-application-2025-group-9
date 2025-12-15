@@ -1,16 +1,10 @@
 import requests
 from flask import current_app
+from datetime import datetime
 
-def get_company_financials(vat_number):
-    """Fetch financial data from bizzy.ai API"""
-    api_key = current_app.config.get('BIZZY_API_KEY')
-    if not api_key:
-        raise ValueError("BIZZY_API_KEY not configured")
-    
-    # Clean VAT number: remove "BE", spaces, dots
-    clean_vat = vat_number.replace("BE", "").replace(" ", "").replace(".", "")
-    
-    url = f"https://api.bizzy.ai/v1/companies/BE/{clean_vat}/financials"
+def get_company_details(clean_vat, api_key):
+    """Fetch company details from bizzy.ai Details API"""
+    url = f"https://api.bizzy.ai/v1/companies/BE/{clean_vat}"
     
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -18,35 +12,106 @@ def get_company_financials(vat_number):
     }
     
     response = requests.get(url, headers=headers)
-    response.raise_for_status()  # Raises exception for bad status
+    response.raise_for_status()
     
-    # Parse JSON once into dict
-    data = response.json()
+    return response.json()
+
+
+def get_company_financials(vat_number):
+    """Fetch comprehensive company data from bizzy.ai API (Details + Financials)"""
+    api_key = current_app.config.get('BIZZY_API_KEY')
+    if not api_key:
+        raise ValueError("BIZZY_API_KEY not configured")
     
-    # Extract company info from identifier
-    identifier = data.get("identifier", {})
+    # Clean VAT number: remove "BE", spaces, dots
+    clean_vat = vat_number.replace("BE", "").replace(" ", "").replace(".", "")
+    
+    # Call Details endpoint
+    details_data = get_company_details(clean_vat, api_key)
+    
+    # Call Financials endpoint
+    financials_url = f"https://api.bizzy.ai/v1/companies/BE/{clean_vat}/financials"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Accept": "application/json"
+    }
+    
+    financials_response = requests.get(financials_url, headers=headers)
+    financials_response.raise_for_status()
+    financials_data = financials_response.json()
+    
+    # Extract company info from Details endpoint
+    details = details_data.get("data", {})
+    identifier = details_data.get("identifier", {})
     company_name = identifier.get("name")
     
-    # Get most recent year's data
-    accounts = data.get("data", [])
+    # Extract address
+    address = details.get("address", {})
+    address_parts = [
+        address.get("street"),
+        address.get("number"),
+        address.get("box"),
+        address.get("postalCode"),
+        address.get("place")
+    ]
+    company_address_full = ", ".join([p for p in address_parts if p and p != "//"])
+    
+    # Parse established date
+    established_since = None
+    if details.get("establishedSince"):
+        try:
+            established_since = datetime.fromisoformat(details["establishedSince"].replace("Z", ""))
+        except:
+            pass
+    
+    # Get most recent financial data
+    accounts = financials_data.get("data", [])
     if not accounts:
         raise ValueError("No financial data available")
     
-    # Sort by year descending and take most recent
     latest_account = max(accounts, key=lambda x: x.get("startDate", ""))
     
     # Extract financial metrics
     profitability = latest_account.get("profitability", {})
+    liquidity = latest_account.get("liquidity", {})
     solvency = latest_account.get("solvency", {})
+    
+    # Calculate ratios
+    total_assets = solvency.get("totalAssets")
+    equity = solvency.get("equity")
+    debt = solvency.get("debt")
+    
+    solvency_ratio = None
+    debt_ratio = None
+    
+    if total_assets and total_assets > 0:
+        if equity:
+            solvency_ratio = (equity / total_assets) * 100
+        if debt:
+            debt_ratio = (debt / total_assets) * 100
     
     # Map to our Company model fields
     company_data = {
         "company_name": company_name,
-        "vat_number": f"BE{clean_vat}",  # Store in clean format: BE0473416418
-        "credit_score": latest_account.get("healthIndicator"),  # This is the credit score
-        "solvency_ratio": solvency.get("equity") / solvency.get("totalAssets") if solvency.get("totalAssets") else None,
-        "debt_ratio": (solvency.get("debt") / solvency.get("totalAssets") * 100) if solvency.get("totalAssets") else None,
-        "sector": None  # Not provided in API response
+        "vat_number": f"BE{clean_vat}",
+        "company_address": company_address_full,
+        "legal_status": details.get("legalStatus"),
+        "established_since": established_since,
+        "revenue_estimation": details.get("revenueEstimations"),
+        "employee_estimation": details.get("employeeEstimations"),
+        "common_score": details.get("commonScore"),
+        "credit_limit": details.get("creditLimit"),
+        "credit_score": latest_account.get("healthIndicator"),
+        "solvency_ratio": round(solvency_ratio, 2) if solvency_ratio else None,
+        "debt_ratio": round(debt_ratio, 2) if debt_ratio else None,
+        "current_ratio": liquidity.get("currentRatio"),
+        "quick_ratio": liquidity.get("quickRatio"),
+        "ebitda": profitability.get("ebitda"),
+        "net_profit": profitability.get("netProfit"),
+        "total_assets": total_assets,
+        "equity": equity,
+        "total_debt": debt,
+        "sector": None  # Can be derived from NACE codes if needed
     }
     
     return company_data
