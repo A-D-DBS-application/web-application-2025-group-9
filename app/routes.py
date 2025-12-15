@@ -421,6 +421,7 @@ def upload_csv():
             company.debt_ratio = api_data.get('debt_ratio')
             company.current_ratio = api_data.get('current_ratio')
             company.quick_ratio = api_data.get('quick_ratio')
+            company.cash = api_data.get('cash')
             company.ebitda = api_data.get('ebitda')
             company.net_profit = api_data.get('net_profit')
             company.total_assets = api_data.get('total_assets')
@@ -479,10 +480,11 @@ def batch_detail(batch_id):
     # Get cases in this batch
     cases = Case.query.filter_by(batch_id=batch_id).all()
     
-    # Sort by common score (risk) or credit score
+    # Sort by quick ratio (higher = better liquidity = visit first)
+    # Then by cash on hand (higher = more money available)
     sorted_cases = sorted(cases, key=lambda c: (
-        c.company.common_score or 'Z',  # A-E, Z for None
-        -(c.company.credit_score or 0)  # Higher credit score = lower priority
+        -(float(c.company.quick_ratio) if c.company.quick_ratio else -999),  # Higher quick ratio first
+        -(float(c.company.cash) if c.company.cash else -999)  # Higher cash first
     ))
     
     return render_template("batch_detail.html", batch=batch, cases=sorted_cases)

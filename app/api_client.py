@@ -106,6 +106,7 @@ def get_company_financials(vat_number):
         "debt_ratio": round(debt_ratio, 2) if debt_ratio else None,
         "current_ratio": liquidity.get("currentRatio"),
         "quick_ratio": liquidity.get("quickRatio"),
+        "cash": liquidity.get("cash"),  # Cash and cash equivalents
         "ebitda": profitability.get("ebitda"),
         "net_profit": profitability.get("netProfit"),
         "total_assets": total_assets,

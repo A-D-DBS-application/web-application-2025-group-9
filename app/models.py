@@ -90,6 +90,7 @@ class Company(db.Model):
     # New fields from Financials API
     current_ratio = db.Column(db.Numeric(10, 4))
     quick_ratio = db.Column(db.Numeric(10, 4))
+    cash = db.Column(db.Numeric(15, 2))  # Cash and cash equivalents
     ebitda = db.Column(db.Numeric(15, 2))
     net_profit = db.Column(db.Numeric(15, 2))
     total_assets = db.Column(db.Numeric(15, 2))
