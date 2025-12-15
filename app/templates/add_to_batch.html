@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Toevoegen aan Batch - Solv.io{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Bedrijf Toevoegen</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3">{{ company.company_name }}</h6>
+                    <p class="text-muted small mb-4">BTW: {{ company.vat_number }}</p>
+                    
+                    <form method="post" action="{{ url_for('main.add_debtor', company_id=company.company_id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Kies een optie:</label>
+                            
+                            <!-- Option 1: Add to existing batch -->
+                            {% if batches %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="option" id="existing_batch" 
+                                           value="existing" checked onchange="toggleBatchOptions()">
+                                    <label class="form-check-label" for="existing_batch">
+                                        Toevoegen aan bestaande batch
+                                    </label>
+                                </div>
+                                <div id="existing_batch_select" class="ms-4 mt-2">
+                                    <select class="form-select" name="batch_id" id="batch_select">
+                                        {% for batch in batches %}
+                                            <option value="{{ batch.batch_id }}">
+                                                {{ batch.batch_name }} ({{ batch.cases|length }} bedrijven)
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Option 2: Create new batch -->
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="radio" name="option" id="new_batch" 
+                                       value="new" {% if not batches %}checked{% endif %} onchange="toggleBatchOptions()">
+                                <label class="form-check-label" for="new_batch">
+                                    Nieuwe batch aanmaken
+                                </label>
+                            </div>
+                            <div id="new_batch_inputs" class="ms-4 mt-2 {% if not batches %}d-block{% else %}d-none{% endif %}">
+                                <input type="text" class="form-control mb-2" name="new_batch_name" 
+                                       id="new_batch_name_input" placeholder="Batch naam">
+                                <textarea class="form-control" name="batch_description" 
+                                          id="new_batch_desc_input" rows="2" placeholder="Beschrijving (optioneel)"></textarea>
+                            </div>
+                            
+                            <!-- Option 3: Add as standalone -->
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="radio" name="option" id="standalone" 
+                                       value="standalone" onchange="toggleBatchOptions()">
+                                <label class="form-check-label" for="standalone">
+                                    Toevoegen als alleenstaande debiteur (geen batch)
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Toevoegen
+                            </button>
+                            <a href="{{ url_for('main.company', company_id=company.company_id) }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuleren
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleBatchOptions() {
+    const existingBatch = document.getElementById('existing_batch');
+    const newBatch = document.getElementById('new_batch');
+    const standalone = document.getElementById('standalone');
+    
+    const existingBatchSelect = document.getElementById('existing_batch_select');
+    const newBatchInputs = document.getElementById('new_batch_inputs');
+    const batchSelect = document.getElementById('batch_select');
+    const newBatchNameInput = document.getElementById('new_batch_name_input');
+    
+    if (existingBatch && existingBatch.checked) {
+        existingBatchSelect.style.display = 'block';
+        newBatchInputs.style.display = 'none';
+        batchSelect.required = true;
+        newBatchNameInput.required = false;
+    } else if (newBatch.checked) {
+        existingBatchSelect.style.display = 'none';
+        newBatchInputs.style.display = 'block';
+        batchSelect.required = false;
+        newBatchNameInput.required = true;
+    } else {
+        existingBatchSelect.style.display = 'none';
+        newBatchInputs.style.display = 'none';
+        batchSelect.required = false;
+        newBatchNameInput.required = false;
+    }
+}
+</script>
+{% endblock %}

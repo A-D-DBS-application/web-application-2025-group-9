@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Upload CSV Batch - Solv.io{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-file-earmark-arrow-up"></i> Upload CSV Debiteuren Batch</h4>
+                </div>
+                <div class="card-body">
+                    {% include 'components/alerts.html' %}
+                    
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="bi bi-info-circle"></i> Instructies:</h6>
+                        <ul class="mb-0 small">
+                            <li>Upload een CSV bestand met BTW-nummers</li>
+                            <li>BTW-nummers kunnen gescheiden zijn door komma's of nieuwe regels</li>
+                            <li>Voorbeeldformaat: <code>BE0473416418, BE0770493071</code> of één BTW-nummer per regel</li>
+                            <li>De applicatie haalt automatisch gegevens op voor elk BTW-nummer</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="post" enctype="multipart/form-data" action="{{ url_for('main.upload_csv') }}">
+                        <div class="mb-3">
+                            <label for="batch_name" class="form-label">Batch Naam *</label>
+                            <input type="text" class="form-control" id="batch_name" name="batch_name" 
+                                   placeholder="bijv. Vrijdag Ochtend Collection" required>
+                            <div class="form-text">Geef deze batch een herkenbare naam</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="batch_description" class="form-label">Beschrijving (optioneel)</label>
+                            <textarea class="form-control" id="batch_description" name="batch_description" 
+                                      rows="2" placeholder="Optionele notities over deze batch"></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="csv_file" class="form-label">CSV Bestand *</label>
+                            <input class="form-control" type="file" id="csv_file" name="csv_file" 
+                                   accept=".csv,.txt" required>
+                            <div class="form-text">Selecteer een CSV of TXT bestand met BTW-nummers</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-cloud-upload"></i> Upload en Verwerk Batch
+                            </button>
+                            <a href="{{ url_for('main.debtors') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuleren
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Example CSV Format -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-file-text"></i> Voorbeeld CSV Formaat</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2 small"><strong>Optie 1: Komma gescheiden</strong></p>
+                    <pre class="bg-light p-2 rounded small">BE0473416418, BE0770493071, BE0123456789</pre>
+                    
+                    <p class="mb-2 mt-3 small"><strong>Optie 2: Eén per regel</strong></p>
+                    <pre class="bg-light p-2 rounded small">BE0473416418
+BE0770493071
+BE0123456789</pre>
+                    
+                    <p class="text-muted small mb-0 mt-3">
+                        <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Je kunt spaties, punten en streepjes gebruiken 
+                        (bijv. BE 0473.416.418) - deze worden automatisch verwijderd.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

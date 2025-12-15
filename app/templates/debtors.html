@@ -1,48 +1,172 @@
 {% extends "base.html" %}
 
-{% block title %}Debiteuren - Solv.io{% endblock %}
+{% block title %}Debiteuren Beheer - Solv.io{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Debiteurenlijst</h2>
-    <p>Bedrijven die als debiteur zijn gemarkeerd, gesorteerd op kredietwaardigheid (laagste score eerst).</p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-people-fill"></i> Debiteuren Beheer</h2>
+        <a href="{{ url_for('main.upload_csv') }}" class="btn btn-primary">
+            <i class="bi bi-file-earmark-arrow-up"></i> Upload CSV Batch
+        </a>
+    </div>
     
     {% include 'components/alerts.html' %}
     
-    {% if cases %}
-        <h3>Debiteuren ({{ cases|length }} gevonden)</h3>
-        
-        <ul class="company-list">
-            {% for case in cases %}
-                <li>
-                    <div class="company-item">
-                        <a href="{{ url_for('main.company', company_id=case.company.company_id) }}">
-                            <div class="company-name">{{ case.company.company_name }}</div>
-                            <div class="company-sector">
-                                BTW: {{ case.company.vat_number or 'Onbekend' }}
-                                {% if case.company.credit_score %}
-                                    | Kreditscore: {{ case.company.credit_score }}
-                                {% endif %}
-                                {% if case.amount %}
-                                    | Bedrag: €{{ case.amount }}
-                                {% endif %}
+    <!-- Search Bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{{ url_for('main.debtors') }}">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Zoek in mijn debiteuren..." 
+                           value="{{ search_query }}">
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i> Zoeken
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Search Results -->
+    {% if search_query %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Zoekresultaten voor "{{ search_query }}"</h5>
+            </div>
+            <div class="card-body">
+                {% if search_results %}
+                    <div class="list-group">
+                        {% for result in search_results %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ result.case.company.company_name }}</h6>
+                                        <small class="text-muted">
+                                            {% if result.batch %}
+                                                In batch: <strong>{{ result.batch.batch_name }}</strong>
+                                            {% else %}
+                                                <em>Alleenstaande debiteur</em>
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        {% if result.batch %}
+                                            <a href="{{ url_for('main.batch_detail', batch_id=result.batch.batch_id) }}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                Bekijk Batch
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ url_for('main.company', company_id=result.case.company.company_id) }}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                Bekijk Bedrijf
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
-                        </a>
-                        <div class="case-status">
-                            Status: {{ case.status or 'Onbekend' }}
-                        </div>
+                        {% endfor %}
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p style="text-align: center; color: var(--text-light); padding: 2rem 0;">
-            Geen debiteuren gevonden. Markeer bedrijven als debiteur op hun detailpagina.
-        </p>
+                {% else %}
+                    <p class="text-muted">Geen resultaten gevonden voor "{{ search_query }}"</p>
+                {% endif %}
+            </div>
+        </div>
     {% endif %}
     
-    <div style="text-align: center; margin-top: 2rem;">
-        <a href="{{ url_for('main.dashboard') }}" class="btn-secondary">Terug naar zoeken</a>
+    <!-- Batches Section -->
+    <div class="mb-4">
+        <h4 class="mb-3"><i class="bi bi-folder2-open"></i> Mijn Batches</h4>
+        {% if batches %}
+            <div class="row">
+                {% for batch in batches %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">{{ batch.batch_name }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-calendar3"></i> {{ batch.created_at.strftime('%d/%m/%Y %H:%M') }}
+                                </p>
+                                {% if batch.description %}
+                                    <p class="card-text small">{{ batch.description }}</p>
+                                {% endif %}
+                                <p class="mb-3">
+                                    <span class="badge bg-info">{{ batch.cases|length }} bedrijven</span>
+                                </p>
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('main.batch_detail', batch_id=batch.batch_id) }}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> Bekijk Details
+                                    </a>
+                                    <form method="post" action="{{ url_for('main.delete_batch', batch_id=batch.batch_id) }}" 
+                                          onsubmit="return confirm('Weet je zeker dat je deze batch wilt verwijderen?');">
+                                        <button type="submit" class="btn btn-sm btn-danger w-100">
+                                            <i class="bi bi-trash"></i> Verwijder Batch
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Nog geen batches aangemaakt. Upload een CSV bestand om te beginnen.
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Standalone Debtors Section -->
+    {% if standalone_debtors %}
+        <div class="mb-4">
+            <h4 class="mb-3"><i class="bi bi-person"></i> Alleenstaande Debiteuren</h4>
+            <div class="list-group">
+                {% for case in standalone_debtors %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ case.company.company_name }}</h6>
+                            <small class="text-muted">
+                                BTW: {{ case.company.vat_number }}
+                                {% if case.company.common_score %}
+                                    | Risico: 
+                                    <span class="badge 
+                                        {% if case.company.common_score == 'A' %}bg-success
+                                        {% elif case.company.common_score == 'B' %}bg-primary
+                                        {% elif case.company.common_score == 'C' %}bg-warning
+                                        {% elif case.company.common_score == 'D' %}bg-danger
+                                        {% else %}bg-dark{% endif %}">
+                                        {{ case.company.common_score }}
+                                    </span>
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('main.company', company_id=case.company.company_id) }}" 
+                               class="btn btn-sm btn-outline-primary me-2">
+                                Bekijk
+                            </a>
+                            <form method="post" action="{{ url_for('main.delete_debtor', case_id=case.case_id) }}" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Weet je zeker dat je deze debiteur wilt verwijderen?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Terug naar Zoeken
+        </a>
     </div>
 </div>
 {% endblock %}

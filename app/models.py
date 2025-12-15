@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 import uuid
 
@@ -132,16 +133,35 @@ class Company1(db.Model):
 # CASE MANAGEMENT
 # =====================================================
 
+class DebtorBatch(db.Model):
+    """Batch of debtors grouped together (e.g., for a collection day)"""
+    __tablename__ = 'debtor_batches'
+    
+    batch_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    batch_name = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    description = db.Column(db.Text)
+    
+    # Relationships
+    cases = db.relationship('Case', backref='batch', lazy=True, foreign_keys='Case.batch_id')
+    user = db.relationship('User', backref='debtor_batches', lazy=True)
+    
+    def __repr__(self):
+        return f"<DebtorBatch {self.batch_name}>"
+
+
 class Case(db.Model):
     """Bailiff cases linked to companies and users"""
     __tablename__ = 'cases'
     
-    case_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    case_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     company_id = db.Column(db.String(36), db.ForeignKey('companies.company_id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)
+    batch_id = db.Column(db.Integer, db.ForeignKey('debtor_batches.batch_id'), nullable=True)  # Link to batch
     amount = db.Column(db.Numeric(15, 2), nullable=False, default=0)
     status = db.Column(db.String(50), nullable=False, default='pending')  # case-status type in DB
-    is_debtor = db.Column(db.Boolean, default=False)  # Flag for debtor list
+    is_debtor = db.Column(db.Boolean, default=False)  # Flag for standalone debtors (no batch)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self):

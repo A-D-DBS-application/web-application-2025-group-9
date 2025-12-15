@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}{{ batch.batch_name }} - Solv.io{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-folder-open"></i> {{ batch.batch_name }}</h2>
+            <p class="text-muted mb-0">
+                <i class="bi bi-calendar3"></i> Aangemaakt: {{ batch.created_at.strftime('%d/%m/%Y om %H:%M') }}
+                | <i class="bi bi-people"></i> {{ cases|length }} bedrijven
+            </p>
+            {% if batch.description %}
+                <p class="mt-2"><small>{{ batch.description }}</small></p>
+            {% endif %}
+        </div>
+        <div>
+            <form method="post" action="{{ url_for('main.delete_batch', batch_id=batch.batch_id) }}" 
+                  style="display: inline;"
+                  onsubmit="return confirm('Weet je zeker dat je deze hele batch wilt verwijderen?');">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Verwijder Batch
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    {% include 'components/alerts.html' %}
+    
+    {% if cases %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Debiteuren in deze Batch (Gesorteerd op Risico)</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Bedrijf</th>
+                                <th>BTW Nummer</th>
+                                <th>Risico Score</th>
+                                <th>Krediet Limiet</th>
+                                <th>Solvabiliteit</th>
+                                <th>Schuld Ratio</th>
+                                <th>Acties</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for case in cases %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('main.company', company_id=case.company.company_id) }}" 
+                                           class="text-decoration-none">
+                                            <strong>{{ case.company.company_name }}</strong>
+                                        </a>
+                                        {% if case.company.revenue_estimation %}
+                                            <br><small class="text-muted">
+                                                <i class="bi bi-graph-up"></i> {{ case.company.revenue_estimation.replace('Bucket', '').replace('_', '-') }}
+                                            </small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <code class="small">{{ case.company.vat_number }}</code>
+                                    </td>
+                                    <td>
+                                        {% if case.company.common_score %}
+                                            <span class="badge 
+                                                {% if case.company.common_score == 'A' %}bg-success
+                                                {% elif case.company.common_score == 'B' %}bg-primary
+                                                {% elif case.company.common_score == 'C' %}bg-warning text-dark
+                                                {% elif case.company.common_score == 'D' %}bg-danger
+                                                {% else %}bg-dark{% endif %}">
+                                                {{ case.company.common_score }}
+                                                {% if case.company.common_score == 'A' %}Zeer Laag
+                                                {% elif case.company.common_score == 'B' %}Laag
+                                                {% elif case.company.common_score == 'C' %}Gemiddeld
+                                                {% elif case.company.common_score == 'D' %}Hoog
+                                                {% else %}Zeer Hoog{% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if case.company.credit_limit %}
+                                            €{{ "{:,.0f}".format(case.company.credit_limit) }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if case.company.solvency_ratio %}
+                                            {{ "%.1f"|format(case.company.solvency_ratio) }}%
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if case.company.debt_ratio %}
+                                            {{ "%.1f"|format(case.company.debt_ratio) }}%
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('main.company', company_id=case.company.company_id) }}" 
+                                               class="btn btn-outline-primary" title="Bekijk Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <form method="post" action="{{ url_for('main.delete_debtor', case_id=case.case_id) }}" 
+                                                  style="display: inline;"
+                                                  onsubmit="return confirm('Verwijder {{ case.company.company_name }} uit deze batch?');">
+                                                <button type="submit" class="btn btn-outline-danger" title="Verwijder uit Batch">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary Stats -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Totaal Bedrijven</h6>
+                        <h3>{{ cases|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Hoog Risico (D/E)</h6>
+                        <h3 class="text-danger">
+                            {{ cases|selectattr('company.common_score', 'in', ['D', 'E'])|list|length }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Gemiddeld Risico (C)</h6>
+                        <h3 class="text-warning">
+                            {{ cases|selectattr('company.common_score', 'equalto', 'C')|list|length }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Laag Risico (A/B)</h6>
+                        <h3 class="text-success">
+                            {{ cases|selectattr('company.common_score', 'in', ['A', 'B'])|list|length }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Deze batch bevat geen bedrijven.
+        </div>
+    {% endif %}
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main.debtors') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Terug naar Alle Batches
+        </a>
+    </div>
+</div>
+{% endblock %}
