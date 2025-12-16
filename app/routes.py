@@ -216,20 +216,6 @@ def company(company_id):
     return render_template("company.html", company=company)
 
 
-@main.route("/score/<company_id>")
-def score(company_id):
-    """Solvency score page - calculate and display company score"""
-    company = Company.query.filter_by(company_id=company_id).first()
-    
-    if not company:
-        return "Bedrijf niet gevonden", 404
-    
-    # Calculate solvency score using model method
-    score = company.calculate_solvency_score()
-    
-    return render_template("score.html", company=company, score=score)
-
-
 @main.route("/debtors")
 def debtors():
     """Display batches and search debtors"""
