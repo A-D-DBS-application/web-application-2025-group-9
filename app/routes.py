@@ -304,6 +304,17 @@ def add_debtor(company_id):
             batch_id = new_batch.batch_id
     # option == "standalone" means batch_id stays None
     
+    # Check if company already exists in the batch (prevent duplicates)
+    if batch_id:
+        existing_case = Case.query.filter_by(
+            company_id=company_id,
+            batch_id=batch_id
+        ).first()
+        
+        if existing_case:
+            flash("Dit bedrijf zit al in deze batch", "warning")
+            return redirect(url_for('main.add_debtor', company_id=company_id))
+    
     # Create case
     case = Case(
         company_id=company_id, 
@@ -439,6 +450,16 @@ def upload_csv():
             
             db.session.add(company)
             db.session.flush()
+            
+            # Check if this company is already in the batch (skip duplicates)
+            existing_case = Case.query.filter_by(
+                company_id=company.company_id,
+                batch_id=batch.batch_id
+            ).first()
+            
+            if existing_case:
+                # Skip this company, already in batch
+                continue
             
             # Create case for this company in the batch
             case = Case(
