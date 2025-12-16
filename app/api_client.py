@@ -80,7 +80,7 @@ def get_company_financials(vat_number):
     # Get most recent financial data
     accounts = financials_data.get("data", [])
     if not accounts:
-        raise ValueError("No financial data available")
+        raise ValueError(f"Bedrijf '{company_name}' gevonden, maar geen financiële gegevens beschikbaar")
     
     latest_account = max(accounts, key=lambda x: x.get("startDate", ""))
     
