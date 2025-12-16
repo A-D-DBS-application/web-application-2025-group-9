@@ -150,8 +150,9 @@
                                 Bekijk
                             </a>
                             <form method="post" action="{{ url_for('main.delete_debtor', case_id=case.case_id) }}" 
-                                  style="display: inline;"
+                                  class="display-inline"
                                   onsubmit="return confirm('Weet je zeker dat je deze debiteur wilt verwijderen?');">
+
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-trash"></i>
                                 </button>

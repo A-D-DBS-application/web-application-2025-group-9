@@ -4,8 +4,8 @@
 
 {% block content %}
 <div class="container-sm">
-    <div class="card" style="margin-top: 3rem;">
-        <h2 style="text-align: center; margin-bottom: 2rem;">Inloggen</h2>
+    <div class="card auth-card">
+        <h2 class="auth-heading">Inloggen</h2>
         
         {% include 'components/alerts.html' %}
         
@@ -18,10 +18,10 @@
             <button type="submit" class="btn-primary btn-block">Inloggen</button>
         </form>
         
-        <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--border-color);">
+        <hr class="auth-divider">
         
-        <p style="text-align: center;">
-            Nog geen account? <a href="{{ url_for('main.register') }}" style="color: var(--secondary-color); font-weight: 600;">Maak er een aan</a>
+        <p class="auth-footer-text">
+            Nog geen account? <a href="{{ url_for('main.register') }}" class="auth-link">Maak er een aan</a>
         </p>
     </div>
 </div>

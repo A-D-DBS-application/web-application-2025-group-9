@@ -33,11 +33,11 @@
             {% endfor %}
         </ul>
     {% elif request.args.get('q') %}
-        <p style="text-align: center; color: var(--text-light); padding: 2rem 0;">
+        <p class="empty-state-message">
             Geen bedrijf gevonden. Probeer een andere zoekopdracht.
         </p>
     {% else %}
-        <p style="text-align: center; color: var(--text-light); padding: 2rem 0;">
+        <p class="empty-state-message">
             Voer een btw-nummer of bedrijfsnaam (indien het bedrijf zich reeds in de database bevindt) in om te zoeken.
         </p>
     {% endif %}

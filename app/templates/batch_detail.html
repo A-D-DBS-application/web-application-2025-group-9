@@ -21,7 +21,7 @@
                 <i class="bi bi-file-earmark-pdf"></i> Exporteer PDF
             </a>
             <form method="post" action="{{ url_for('main.delete_batch', batch_id=batch.batch_id) }}" 
-                  style="display: inline;"
+                  class="display-inline"
                   onsubmit="return confirm('Weet je zeker dat je deze hele batch wilt verwijderen?');">
                 <button type="submit" class="btn btn-danger">
                     <i class="bi bi-trash"></i> Verwijder Batch
@@ -115,7 +115,7 @@
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                             <form method="post" action="{{ url_for('main.delete_debtor', case_id=case.case_id) }}" 
-                                                  style="display: inline;"
+                                                  class="display-inline"
                                                   onsubmit="return confirm('Verwijder {{ case.company.company_name }} uit deze batch?');">
                                                 <button type="submit" class="btn btn-outline-danger" title="Verwijder uit Batch">
                                                     <i class="bi bi-trash"></i>
