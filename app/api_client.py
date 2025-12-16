@@ -47,14 +47,27 @@ def get_company_financials(vat_number):
     
     # Extract address
     address = details.get("address", {})
-    address_parts = [
-        address.get("street"),
-        address.get("number"),
-        address.get("box"),
-        address.get("postalCode"),
-        address.get("place")
-    ]
-    company_address_full = ", ".join([p for p in address_parts if p and p != "//"])
+    street = address.get("street", "")
+    number = address.get("number", "")
+    box_val = address.get("box", "")
+    postal = address.get("postalCode", "")
+    place = address.get("place", "")
+    
+    # Build address: "Street Number, Box, Postal, Place"
+    address_parts = []
+    if street and number:
+        address_parts.append(f"{street} {number}")  # No comma between street and number
+    elif street:
+        address_parts.append(street)
+    
+    if box_val and box_val != "//":
+        address_parts.append(box_val)
+    if postal:
+        address_parts.append(postal)
+    if place:
+        address_parts.append(place)
+    
+    company_address_full = ", ".join(address_parts)
     
     # Parse established date
     established_since = None
