@@ -127,10 +127,15 @@ def dashboard():
     # Normalize the query: uppercase, remove spaces, dots, and hyphens
     normalized_query = query.upper().replace(' ', '').replace('.', '').replace('-', '')
 
-    # Check if it looks like a Belgian VAT number
-    if normalized_query.startswith('BE') and normalized_query[2:].isdigit() and len(normalized_query) == 12:
+    # Check if it looks like a Belgian VAT number with BE prefix
+    if normalized_query.startswith('BE') and normalized_query[2:].isdigit() and len(normalized_query) in [11, 12]:
         # The VAT number is already clean and normalized
         return redirect(url_for('main.search_vat', vat_number=normalized_query))
+    
+    # Check if it's a 9 or 10 digit number (Belgian VAT without BE prefix)
+    if normalized_query.isdigit() and len(normalized_query) in [9, 10]:
+        # Prepend BE to make it a full Belgian VAT number
+        return redirect(url_for('main.search_vat', vat_number=f'BE{normalized_query}'))
     
     # Search companies by name
     companies = Company.query.filter(

@@ -1,6 +1,26 @@
 import requests
+import re
 from flask import current_app
 from datetime import datetime
+
+def clean_vat_number(vat_number):
+    """Clean VAT number according to Belgian format"""
+    # Extract only digits
+    digits = re.sub(r"\D", "", vat_number)
+    
+    # Belgian VAT: 10 digits where first is 0 → strip it to 9 digits
+    if len(digits) == 10 and digits.startswith("0"):
+        return digits[1:]  # 9 digits
+    
+    # New format: starts with 1, keep all 10 digits
+    if len(digits) == 10 and digits.startswith("1"):
+        return digits  # 10 digits
+    
+    # Already 9 digits (0 was already stripped)
+    if len(digits) == 9:
+        return digits
+    
+    raise ValueError(f"Ongeldig Belgisch BTW-nummer: {vat_number}")
 
 def get_company_details(clean_vat, api_key):
     """Fetch company details from bizzy.ai Details API"""
@@ -23,8 +43,8 @@ def get_company_financials(vat_number):
     if not api_key:
         raise ValueError("BIZZY_API_KEY not configured")
     
-    # Clean VAT number: remove "BE", spaces, dots
-    clean_vat = vat_number.replace("BE", "").replace(" ", "").replace(".", "")
+    # Clean VAT number using proper Belgian format
+    clean_vat = clean_vat_number(vat_number)
     
     # Call Details endpoint
     details_data = get_company_details(clean_vat, api_key)
