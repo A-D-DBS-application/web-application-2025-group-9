@@ -583,3 +583,39 @@ li {
 .display-inline-block {
     display: inline-block;
 }
+
+/* Info box styles */
+.info-box {
+    background-color: #e7f3ff;
+    border-left: 4px solid #0d6efd;
+    padding: 12px 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.info-box-title {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+.info-box-formats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.info-box-format-tag {
+    background-color: white;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid #dee2e6;
+}
+
+.info-box-note {
+    margin: 10px 0 0 0;
+    font-size: 0.85rem;
+    color: #6c757d;
+}

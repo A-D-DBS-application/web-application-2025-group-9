@@ -1,15 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Solv.io{% endblock %}
+{% block title %}Zoeken - Solv.io{% endblock %}
 
 {% block content %}
 <div class="container">
     <h2>Bedrijven zoeken</h2>
     
     <form action="{{ url_for('main.dashboard') }}" method="get" class="search-form">
-        <input type="text" name="q" placeholder="Typ hier een bedrijfsnaam..." value="{{ request.args.get('q', '') }}">
+        <input type="text" name="q" placeholder="Typ hier een bedrijfsnaam of BTW-nummer..." value="{{ request.args.get('q', '') }}">
         <button type="submit" class="btn-primary">Zoeken</button>
     </form>
+    
+    <div class="info-box">
+        <p class="info-box-title">ℹ️ Toegestane BTW-nummer formaten:</p>
+        <div class="info-box-formats">
+            <span class="info-box-format-tag">✓ BE 0426.994.097</span>
+            <span class="info-box-format-tag">✓ BE-0426.994.097</span>
+            <span class="info-box-format-tag">✓ 0426.994.097</span>
+            <span class="info-box-format-tag">✓ 0426994097</span>
+            <span class="info-box-format-tag">✓ BE0426994097</span>
+        </div>
+        <p class="info-box-note">💡 Het systeem herkent automatisch Belgische BTW-nummers in verschillende formaten.</p>
+    </div>
     
     {% include 'components/alerts.html' %}
     
