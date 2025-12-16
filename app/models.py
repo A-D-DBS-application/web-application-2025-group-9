@@ -28,7 +28,7 @@ class User(db.Model):
     """User profile information and authentication"""
     __tablename__ = 'users'
     
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = db.Column(db.String(255), nullable=False, unique=True)  # For login
     user_name = db.Column(db.String(255), nullable=False)  # Display name
     user_email = db.Column(db.String(255), nullable=False, unique=True)
@@ -80,6 +80,9 @@ class Company(db.Model):
     equity = db.Column(db.Numeric(15, 2))
     total_debt = db.Column(db.Numeric(15, 2))
     
+    # Soft delete
+    deleted_at = db.Column(db.DateTime, nullable=True)
+    
     # Relationships
     cases = db.relationship('Case', backref='company', lazy=True, foreign_keys='Case.company_id')
     
@@ -109,9 +112,10 @@ class DebtorBatch(db.Model):
     
     batch_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     batch_name = db.Column(db.String(255), nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id', ondelete='SET NULL'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.Text)
+    deleted_at = db.Column(db.DateTime, nullable=True)
     
     # Relationships
     cases = db.relationship('Case', backref='batch', lazy=True, foreign_keys='Case.batch_id')
@@ -127,12 +131,13 @@ class Case(db.Model):
     
     case_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     company_id = db.Column(db.String(36), db.ForeignKey('companies.company_id'), nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)
-    batch_id = db.Column(db.Integer, db.ForeignKey('debtor_batches.batch_id', ondelete='CASCADE'), nullable=True)  # Link to batch
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id', ondelete='SET NULL'), nullable=True)
+    batch_id = db.Column(db.Integer, db.ForeignKey('debtor_batches.batch_id', ondelete='SET NULL'), nullable=True)  # Link to batch
     amount = db.Column(db.Numeric(15, 2), nullable=False, default=0)
     status = db.Column(db.String(50), nullable=False, default='pending')  # case-status type in DB
     is_debtor = db.Column(db.Boolean, default=False)  # Flag for standalone debtors (no batch)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    deleted_at = db.Column(db.DateTime, nullable=True)
     
     def __repr__(self):
         return f"<Case {self.case_id} - {self.status}>"
