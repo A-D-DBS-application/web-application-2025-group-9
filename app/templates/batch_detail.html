@@ -61,7 +61,7 @@
                                         </a>
                                         {% if case.company.revenue_estimation %}
                                             <br><small class="text-muted">
-                                                <i class="bi bi-graph-up"></i> {{ case.company.revenue_estimation.replace('Bucket', '').replace('_', '-') }}
+                                                <i class="bi bi-graph-up"></i> {{ case.company.revenue_estimation|bucket }}
                                             </small>
                                         {% endif %}
                                     </td>

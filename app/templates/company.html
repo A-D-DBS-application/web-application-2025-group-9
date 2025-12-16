@@ -41,10 +41,10 @@
                         <p><strong>Opgericht:</strong> {{ company.established_since.strftime('%d-%m-%Y') }}</p>
                     {% endif %}
                     {% if company.revenue_estimation %}
-                        <p><strong>Omzetschatting:</strong> {{ company.revenue_estimation }}</p>
+                        <p><strong>Omzetschatting:</strong> {{ company.revenue_estimation|bucket }}</p>
                     {% endif %}
                     {% if company.employee_estimation %}
-                        <p><strong>Personeelsschatting:</strong> {{ company.employee_estimation }}</p>
+                        <p><strong>Personeelsschatting:</strong> {{ company.employee_estimation|bucket }}</p>
                     {% endif %}
                 </div>
             </div>
