@@ -201,9 +201,6 @@
                 <td class="rank">{{ loop.index }}</td>
                 <td>
                     <strong>{{ case.company.company_name }}</strong>
-                    {% if case.company.legal_status %}
-                    <br><span class="text-muted" style="font-size: 7.5pt;">{{ case.company.legal_status }}</span>
-                    {% endif %}
                 </td>
                 <td>{{ case.company.vat_number }}</td>
                 <td class="text-end">
