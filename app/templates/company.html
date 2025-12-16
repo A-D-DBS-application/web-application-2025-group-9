@@ -36,10 +36,7 @@
                     {% endif %}
                     {% if company.company_address %}
                         <p><strong>Adres:</strong> {{ company.company_address }}</p>
-                    {% endif %}
-                    {% if company.legal_status %}
-                        <p><strong>Juridische status:</strong> {{ company.legal_status }}</p>
-                    {% endif %}
+                    {% endif %}                   
                     {% if company.established_since %}
                         <p><strong>Opgericht:</strong> {{ company.established_since.strftime('%d-%m-%Y') }}</p>
                     {% endif %}
