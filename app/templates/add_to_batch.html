@@ -92,21 +92,36 @@ function toggleBatchOptions() {
     const newBatchNameInput = document.getElementById('new_batch_name_input');
     
     if (existingBatch && existingBatch.checked) {
-        existingBatchSelect.style.display = 'block';
-        newBatchInputs.style.display = 'none';
-        batchSelect.required = true;
+        if (existingBatchSelect) {
+            existingBatchSelect.classList.remove('d-none');
+            existingBatchSelect.classList.add('d-block');
+        }
+        newBatchInputs.classList.remove('d-block');
+        newBatchInputs.classList.add('d-none');
+        if (batchSelect) batchSelect.required = true;
         newBatchNameInput.required = false;
     } else if (newBatch.checked) {
-        existingBatchSelect.style.display = 'none';
-        newBatchInputs.style.display = 'block';
-        batchSelect.required = false;
+        if (existingBatchSelect) {
+            existingBatchSelect.classList.remove('d-block');
+            existingBatchSelect.classList.add('d-none');
+        }
+        newBatchInputs.classList.remove('d-none');
+        newBatchInputs.classList.add('d-block');
+        if (batchSelect) batchSelect.required = false;
         newBatchNameInput.required = true;
     } else {
-        existingBatchSelect.style.display = 'none';
-        newBatchInputs.style.display = 'none';
-        batchSelect.required = false;
+        if (existingBatchSelect) {
+            existingBatchSelect.classList.remove('d-block');
+            existingBatchSelect.classList.add('d-none');
+        }
+        newBatchInputs.classList.remove('d-block');
+        newBatchInputs.classList.add('d-none');
+        if (batchSelect) batchSelect.required = false;
         newBatchNameInput.required = false;
     }
 }
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', toggleBatchOptions);
 </script>
 {% endblock %}
