@@ -94,7 +94,7 @@
                                     <p class="card-text small">{{ batch.description }}</p>
                                 {% endif %}
                                 <p class="mb-3">
-                                    <span class="badge bg-info">{{ batch.cases|length }} bedrijven</span>
+                                    <span class="badge bg-info">{{ batch.cases|length }} {{ 'bedrijf' if batch.cases|length == 1 else 'bedrijven' }}</span>
                                 </p>
                                 <div class="d-grid gap-2">
                                     <a href="{{ url_for('main.batch_detail', batch_id=batch.batch_id) }}" 
