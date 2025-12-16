@@ -128,7 +128,7 @@ class Case(db.Model):
     case_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     company_id = db.Column(db.String(36), db.ForeignKey('companies.company_id'), nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)
-    batch_id = db.Column(db.Integer, db.ForeignKey('debtor_batches.batch_id'), nullable=True)  # Link to batch
+    batch_id = db.Column(db.Integer, db.ForeignKey('debtor_batches.batch_id', ondelete='CASCADE'), nullable=True)  # Link to batch
     amount = db.Column(db.Numeric(15, 2), nullable=False, default=0)
     status = db.Column(db.String(50), nullable=False, default='pending')  # case-status type in DB
     is_debtor = db.Column(db.Boolean, default=False)  # Flag for standalone debtors (no batch)
