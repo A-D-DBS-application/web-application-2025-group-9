@@ -77,7 +77,6 @@ class Company(db.Model):
     credit_score = db.Column(db.Numeric(10, 2))
     solvency_ratio = db.Column(db.Numeric(10, 2))
     debt_ratio = db.Column(db.Numeric(10, 2))
-    sector = db.Column(db.String(255))
     
     # New fields from Details API
     legal_status = db.Column(db.String(100))

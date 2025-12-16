@@ -427,7 +427,6 @@ def upload_csv():
             company.total_assets = api_data.get('total_assets')
             company.equity = api_data.get('equity')
             company.total_debt = api_data.get('total_debt')
-            company.sector = api_data.get('sector')
             
             db.session.add(company)
             db.session.flush()

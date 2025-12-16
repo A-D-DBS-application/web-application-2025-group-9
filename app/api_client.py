@@ -124,8 +124,7 @@ def get_company_financials(vat_number):
         "net_profit": profitability.get("netProfit"),
         "total_assets": total_assets,
         "equity": equity,
-        "total_debt": debt,
-        "sector": None  # Can be derived from NACE codes if needed
+        "total_debt": debt
     }
     
     return company_data
