@@ -79,7 +79,6 @@ class Company(db.Model):
     debt_ratio = db.Column(db.Numeric(10, 2))
     
     # New fields from Details API
-    legal_status = db.Column(db.String(100))
     established_since = db.Column(db.Date)
     revenue_estimation = db.Column(db.String(50))
     employee_estimation = db.Column(db.String(50))

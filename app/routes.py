@@ -168,7 +168,6 @@ def search_vat(vat_number):
         # Update with all API data
         company.company_name = api_data.get('company_name')
         company.company_address = api_data.get('company_address')
-        company.legal_status = api_data.get('legal_status')
         company.established_since = api_data.get('established_since')
         company.revenue_estimation = api_data.get('revenue_estimation')
         company.employee_estimation = api_data.get('employee_estimation')
@@ -416,7 +415,6 @@ def upload_csv():
             # Update with API data
             company.company_name = api_data.get('company_name')
             company.company_address = api_data.get('company_address')
-            company.legal_status = api_data.get('legal_status')
             company.established_since = api_data.get('established_since')
             company.revenue_estimation = api_data.get('revenue_estimation')
             company.employee_estimation = api_data.get('employee_estimation')

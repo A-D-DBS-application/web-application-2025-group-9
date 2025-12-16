@@ -128,7 +128,6 @@ def get_company_financials(vat_number):
         "company_name": company_name,
         "vat_number": f"BE{clean_vat}",
         "company_address": company_address_full,
-        "legal_status": details.get("legalStatus"),
         "established_since": established_since,
         "revenue_estimation": details.get("revenueEstimations"),
         "employee_estimation": details.get("employeeEstimations"),
