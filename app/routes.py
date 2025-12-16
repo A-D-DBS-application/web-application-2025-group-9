@@ -189,6 +189,7 @@ def search_vat(vat_number):
         
     except Exception as e:
         # On error, redirect back to dashboard with error
+        flash(f"Fout bij opzoeken bedrijf: Bedrijf niet gevonden of API fout", "danger")
         return redirect(url_for("main.dashboard"))
 
 
