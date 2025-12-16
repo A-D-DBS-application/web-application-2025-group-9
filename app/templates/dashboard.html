@@ -22,12 +22,11 @@
                     <div class="company-item">
                         <a href="{{ url_for('main.company', company_id=company.company_id) }}">
                             <div class="company-name">{{ company.company_name }}</div>
-                            <div class="company-sector">
-                                Sector: {{ company.sector or 'Onbekend' }}
-                                {% if company.credit_score %}
-                                    | Kreditscore: {{ company.credit_score }}
-                                {% endif %}
-                            </div>
+                            {% if company.credit_score %}
+                                <div class="company-info">
+                                    Kredietscore: {{ company.credit_score }}
+                                </div>
+                            {% endif %}
                         </a>
                     </div>
                 </li>
