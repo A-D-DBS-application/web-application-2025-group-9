@@ -24,28 +24,13 @@ class Role(db.Model):
         return f"<Role {self.role_name}>"
 
 
-class LoginGegevens(db.Model):
-    """Login credentials (authentication table)"""
-    __tablename__ = 'inlog_gegevens'
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    naam = db.Column(db.String(255), nullable=False, unique=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Foreign key to users table
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    user = db.relationship('User', backref='login_credentials', uselist=False)
-    
-    def __repr__(self):
-        return f"<LoginGegevens {self.naam}>"
-
-
 class User(db.Model):
-    """User profile information"""
+    """User profile information and authentication"""
     __tablename__ = 'users'
     
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_name = db.Column(db.String(255), nullable=False)
+    username = db.Column(db.String(255), nullable=False, unique=True)  # For login
+    user_name = db.Column(db.String(255), nullable=False)  # Display name
     user_email = db.Column(db.String(255), nullable=False, unique=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -124,7 +109,7 @@ class DebtorBatch(db.Model):
     
     batch_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     batch_name = db.Column(db.String(255), nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.Text)
     

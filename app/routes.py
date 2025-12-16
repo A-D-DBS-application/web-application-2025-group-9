@@ -1,5 +1,5 @@
 from flask import Blueprint, request, redirect, url_for, render_template, session, flash
-from .models import db, LoginGegevens, User, Company, Case, Role, DebtorBatch
+from .models import db, User, Company, Case, Role, DebtorBatch
 from .api_client import get_company_financials
 import re
 import csv
@@ -30,15 +30,15 @@ def login():
     # POST - Process login
     naam = request.form.get("naam")
     
-    # Find user by login username
-    login_user = LoginGegevens.query.filter_by(naam=naam).first()
+    # Find user by username
+    user = User.query.filter_by(username=naam).first()
     
-    if not login_user:
+    if not user:
         return render_template("login.html", error="Gebruiker bestaat niet")
     
     # No password check needed - open access
     session['user'] = naam
-    session['user_id'] = login_user.user_id
+    session['user_id'] = user.user_id
     return redirect(url_for("main.dashboard"))
 
 
@@ -57,8 +57,8 @@ def register():
     user_email = request.form.get("user_email")
     
     # Validation: Username doesn't exist
-    existing_login = LoginGegevens.query.filter_by(naam=naam).first()
-    if existing_login:
+    existing_user = User.query.filter_by(username=naam).first()
+    if existing_user:
         roles = Role.query.all()
         return render_template("register.html", error="Gebruiker bestaat al!", roles=roles)
     
@@ -68,21 +68,14 @@ def register():
         roles = Role.query.all()
         return render_template("register.html", error="Email bestaat al!", roles=roles)
     
-    # Create new User
+    # Create new User with all fields
     new_user = User(
+        username=naam,
         user_name=user_name,
         user_email=user_email,
         role_id=rol_id
     )
     db.session.add(new_user)
-    db.session.flush()  # Flush to get user_id without committing
-    
-    # Create new LoginGegevens linked to User (no password)
-    new_login = LoginGegevens(
-        naam=naam,
-        user_id=new_user.user_id
-    )
-    db.session.add(new_login)
     db.session.commit()
     
     # Auto-login
