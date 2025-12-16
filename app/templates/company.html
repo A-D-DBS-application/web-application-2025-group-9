@@ -101,6 +101,9 @@
                     {% if company.quick_ratio %}
                         <p><strong>Quick Ratio:</strong> {{ "{:.4f}".format(company.quick_ratio) }}</p>
                     {% endif %}
+                    {% if company.cash %}
+                        <p><strong>Kasmiddelen:</strong> €{{ "{:,.2f}".format(company.cash) }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
