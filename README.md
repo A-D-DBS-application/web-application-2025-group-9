@@ -120,3 +120,6 @@ Link to Render: https://web-application-2025-group-9.onrender.com/
 You can find our feedback sessions with our external partner here:
 - [Feedback Sessie 1 - WhatsApp Audio Recording](https://drive.google.com/file/d/1--3B42kcW603DZGRa1rAkQcun9GAE7mX/view?usp=sharing) - Recording van irl meeting
 - [Feedback Sessie 2 - Google Meet](https://drive.google.com/file/d/1n-67_Gqf03S4-FZ_4C8yfMLHc437P-iR/view?pli=1) - Bespreking via Google Meet
+
+You can find our UI Prototype screenshots in the file with the same name: `UI prototype screenshots` and our Figma website here:
+https://www.figma.com/make/oSz1PQA7rTZVGaD2A0opX8/Bailiff-Management-Website?p=f&t=NF5kowFDnnZYOwzc-0
