@@ -97,7 +97,7 @@ The project uses PostgreSQL with the following tables:
 - **debtor_batches** - Groups of debtors
 - **cases** - Individual files linked to companies and users
 
-See `database/ERD.png` for the complete Entity Relationship Diagram.
+See `database/ERD_Group9.png` and `database/DDL_Group9.sql` for the complete Entity Relationship Diagram and DDL.
 
 ## Tech Stack
 
