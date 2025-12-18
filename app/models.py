@@ -10,20 +10,6 @@ db = SQLAlchemy()
 # AUTHENTICATION & USER MANAGEMENT
 # =====================================================
 
-class Role(db.Model):
-    """User roles (bailiff, legal associate, firm admin, compliance officer, etc.)"""
-    __tablename__ = 'roles'
-    
-    role_id = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(100), nullable=False, unique=True)
-    
-    # Relationships
-    users = db.relationship('User', backref='role', lazy=True)
-    
-    def __repr__(self):
-        return f"<Role {self.role_name}>"
-
-
 class User(db.Model):
     """User profile information and authentication"""
     __tablename__ = 'users'
@@ -32,10 +18,8 @@ class User(db.Model):
     username = db.Column(db.String(255), nullable=False, unique=True)  # For login
     user_name = db.Column(db.String(255), nullable=False)  # Display name
     user_email = db.Column(db.String(255), nullable=False, unique=True)
+    role = db.Column(db.String(50), nullable=True)  # Optional: Bailiff, Legal Associate, Firm Admin, etc.
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Foreign key to roles
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.role_id'), nullable=False)
     
     # Relationships
     cases = db.relationship('Case', backref='user', lazy=True, foreign_keys='Case.user_id')

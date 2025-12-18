@@ -1,5 +1,5 @@
 from flask import Blueprint, request, redirect, url_for, render_template, session, flash
-from .models import db, User, Company, Case, Role, DebtorBatch
+from .models import db, User, Company, Case, DebtorBatch
 from .api_client import get_company_financials
 import re
 import csv
@@ -46,34 +46,30 @@ def login():
 def register():
     """Registration route - create new user account"""
     if request.method == "GET":
-        # Fetch roles for dropdown selection
-        roles = Role.query.all()
-        return render_template("register.html", roles=roles)
+        return render_template("register.html")
     
     # POST - Process registration
-    rol_id = request.form.get("rol")
     naam = request.form.get("naam")
     user_name = request.form.get("user_name", naam)  # Default to naam if not provided
     user_email = request.form.get("user_email")
+    role = request.form.get("role")  # Optional role field
     
     # Validation: Username doesn't exist
     existing_user = User.query.filter_by(username=naam).first()
     if existing_user:
-        roles = Role.query.all()
-        return render_template("register.html", error="Gebruiker bestaat al!", roles=roles)
+        return render_template("register.html", error="Gebruiker bestaat al!")
     
     # Validation: Email doesn't exist
     existing_email = User.query.filter_by(user_email=user_email).first()
     if existing_email:
-        roles = Role.query.all()
-        return render_template("register.html", error="Email bestaat al!", roles=roles)
+        return render_template("register.html", error="Email bestaat al!")
     
     # Create new User with all fields
     new_user = User(
         username=naam,
         user_name=user_name,
         user_email=user_email,
-        role_id=rol_id
+        role=role
     )
     db.session.add(new_user)
     db.session.commit()
