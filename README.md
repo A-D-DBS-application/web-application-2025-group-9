@@ -123,3 +123,5 @@ You can find our feedback sessions with our external partner here:
 
 You can find our UI Prototype screenshots in the file with the same name: `UI prototype screenshots` and our Figma website here:
 https://www.figma.com/make/oSz1PQA7rTZVGaD2A0opX8/Bailiff-Management-Website?p=f&t=NF5kowFDnnZYOwzc-0
+
+You can find our presentation slides with the demo at slide 9 in `presentation`
